@@ -20,12 +20,15 @@ link_libraries(imgui)
 
 # Add local libraries
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/DiscordRPCpp)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/glad)
 
 # Include local libraries
 include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/DiscordRPCpp/include)
+include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/glad/include)
 
 # Link local libraries
 link_libraries(DiscordRPCpp)
+link_libraries(glad)
 
 # Project
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Discordus)
