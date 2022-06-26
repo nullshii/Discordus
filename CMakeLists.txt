@@ -10,7 +10,7 @@ include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/Simpleini/)
 
 # Link submodules | link_libraries(L_I_B_N_A_M_E)
 link_libraries(discord-rpc)
-link_libraries(Simpleini)
+link_libraries(SimpleIni)
 
 # Add local libraries
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/DiscordRPCpp)
