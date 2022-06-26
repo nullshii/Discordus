@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.8)
 
-project(glad CXX)
+project(glad C)
 file(GLOB_RECURSE ${PROJECT_NAME}Files ${CMAKE_CURRENT_SOURCE_DIR}/src/**.c)
 
 add_library(${PROJECT_NAME} STATIC ${${PROJECT_NAME}Files})
