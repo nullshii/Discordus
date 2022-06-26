@@ -2,6 +2,8 @@ Discordus
 =========
 Simle cross-platform gui app to set custom discord status.
 
+**[||||||||--]** *80% Done*
+
 ![Preview](Assets/Preview.png)
 
 Special thanks to:
