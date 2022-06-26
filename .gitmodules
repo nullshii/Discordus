@@ -4,3 +4,9 @@
 [submodule "Simpleini"]
 	path = Simpleini
 	url = https://github.com/PureFoxCore/Simpleini
+[submodule "glfw"]
+	path = glfw
+	url = https://github.com/glfw/glfw
+[submodule "imgui"]
+	path = imgui
+	url = https://github.com/PureFoxCore/imgui
