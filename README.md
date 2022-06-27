@@ -8,6 +8,7 @@ Simle cross-platform gui app to set custom discord status.
 - [DiscordRPCpp - Handle response properly](DiscordRPCpp/src/DiscordRPC.cpp)
 - [Discordus - Implement save file dialog](Discordus/src/Main.cpp)
 - [Discordus - Implement open file dialog](Discordus/src/Main.cpp)
+- [Discordus - Load font](Discordus/src/Main.cpp)
 
 ![Preview](Assets/Preview.png)
 

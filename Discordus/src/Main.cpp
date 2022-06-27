@@ -339,7 +339,7 @@ int main(int, char **)
 	ImGui_ImplGlfw_InitForOpenGL(appWindow, true);
 	ImGui_ImplOpenGL3_Init("#version 130");
 
-	// Load Fonts
+	// TODO: Load Font
 	// - If no fonts are loaded, dear imgui will use the default font. You can also load multiple fonts and use ImGui::PushFont()/PopFont() to
 	// select them.
 	// - AddFontFromFileTTF() will return the ImFont* so you can store it if you need to select the font among multiple.
