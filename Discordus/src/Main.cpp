@@ -11,12 +11,18 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <imgui.h>
+#include <imfilebrowser.h>
+#include <SimpleIni.h>
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
 
 GLFWwindow *appWindow;
 ImFont *appFont;
 DiscordRPC *rpc;
+CSimpleIniA ini;
+ImGui::FileBrowser saveFileDialog(ImGuiFileBrowserFlags_EnterNewFilename | ImGuiFileBrowserFlags_CreateNewDir
+								  | ImGuiFileBrowserFlags_CloseOnEsc);
+ImGui::FileBrowser loadFileDialog(ImGuiFileBrowserFlags_CloseOnEsc);
 
 static bool useTime = true;
 static bool useEndTime = false;
@@ -46,11 +52,9 @@ char smallImagekey[30] = "discordus";
 
 void quit() { glfwSetWindowShouldClose(appWindow, true); }
 
-// TODO: Implement save file dialog
-void saveToFile() {}
+void saveToFile() { saveFileDialog.Open(); }
 
-// TODO: Implement open file dialog
-void openFile() {}
+void openFile() { loadFileDialog.Open(); }
 
 void updateStatus()
 {
@@ -189,7 +193,7 @@ void RenderApp()
 		ImGui::Begin("Discordus", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBackground);
 
 		ImGui::InputText("Application ID", appId, sizeof(appId));
-		// ImGui::SameLine(0.0f, 10.0f);
+
 		if (ImGui::Button("Update Application ID"))
 			updateAppId();
 
@@ -266,6 +270,27 @@ void RenderApp()
 		ImGui::PopStyleVar(2);
 	}
 	ImGui::PopFont();
+
+	{
+		if (saveFileDialog.HasSelected())
+		{
+			// TODO: Set values
+			ini.SetValue("Discordus", "details", details);
+
+			ini.SaveFile((saveFileDialog.GetSelected().string() + ".ini").c_str());
+			saveFileDialog.ClearSelected();
+			loadFileDialog.Close();
+		}
+
+		if (loadFileDialog.HasSelected())
+		{
+			ini.LoadFile((loadFileDialog.GetSelected().string() + ".ini").c_str());
+			// TODO: Get values
+
+			loadFileDialog.ClearSelected();
+			loadFileDialog.Close();
+		}
+	}
 }
 
 void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
@@ -323,6 +348,10 @@ int main(int, char **)
 	std::cout << "Version: " << glGetString(GL_VERSION) << std::endl;
 
 	updateAppId();
+	saveFileDialog.SetTitle("Save file");
+	saveFileDialog.SetTypeFilters({".ini"});
+	loadFileDialog.SetTitle("Load file");
+	loadFileDialog.SetTypeFilters({".ini"});
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -356,6 +385,8 @@ int main(int, char **)
 		ImGui::NewFrame();
 
 		RenderAppBar();
+		saveFileDialog.Display();
+		loadFileDialog.Display();
 		RenderApp();
 
 		ImGui::Render();
