@@ -9,7 +9,7 @@
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
 
-static bool debugMenu = true;
+static bool debugMenu = false;
 GLFWwindow *appWindow;
 
 void quit()
@@ -36,6 +36,8 @@ void RenderAppBar()
             {
                 quit();
             }
+
+            ImGui::MenuItem("Debug menu", "", &debugMenu);
 
             ImGui::EndMenu();
         }
