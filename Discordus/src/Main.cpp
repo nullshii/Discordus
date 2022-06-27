@@ -1,4 +1,5 @@
-#include "discord_rpc.h"
+#include <discord_rpc.h>
+#include "OpenSans.h"
 #include "imgui_internal.h"
 #include <DiscordRPC.h>
 #include <cstdlib>
@@ -14,6 +15,7 @@
 #include <backends/imgui_impl_opengl3.h>
 
 GLFWwindow *appWindow;
+ImFont *appFont;
 DiscordRPC *rpc;
 
 static bool useTime = true;
@@ -121,6 +123,7 @@ static bool debugMenu = false;
 
 void RenderAppBar()
 {
+	ImGui::PushFont(appFont);
 	{
 		ImGui::BeginMainMenuBar();
 
@@ -159,6 +162,7 @@ void RenderAppBar()
 
 		ImGui::EndMainMenuBar();
 	}
+	ImGui::PopFont();
 }
 
 void RenderApp()
@@ -173,6 +177,7 @@ void RenderApp()
 		ImGui::End();
 	}
 
+	ImGui::PushFont(appFont);
 	{
 		const ImGuiViewport *viewport = ImGui::GetMainViewport();
 		ImGui::SetNextWindowPos(viewport->WorkPos);
@@ -260,6 +265,7 @@ void RenderApp()
 
 		ImGui::PopStyleVar(2);
 	}
+	ImGui::PopFont();
 }
 
 void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
@@ -300,7 +306,7 @@ int main(int, char **)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
-	appWindow = glfwCreateWindow(555, 500, "Discordus", nullptr, nullptr);
+	appWindow = glfwCreateWindow(555, 555, "Discordus", nullptr, nullptr);
 	if (!appWindow)
 		return 1;
 
@@ -339,23 +345,7 @@ int main(int, char **)
 	ImGui_ImplGlfw_InitForOpenGL(appWindow, true);
 	ImGui_ImplOpenGL3_Init("#version 130");
 
-	// TODO: Load Font
-	// - If no fonts are loaded, dear imgui will use the default font. You can also load multiple fonts and use ImGui::PushFont()/PopFont() to
-	// select them.
-	// - AddFontFromFileTTF() will return the ImFont* so you can store it if you need to select the font among multiple.
-	// - If the file cannot be loaded, the function will return NULL. Please handle those errors in your application (e.g. use an assertion, or
-	// display an error and quit).
-	// - The fonts will be rasterized at a given size (w/ oversampling) and stored into a texture when calling
-	// ImFontAtlas::Build()/GetTexDataAsXXXX(), which ImGui_ImplXXXX_NewFrame below will call.
-	// - Read 'docs/FONTS.md' for more instructions and details.
-	// - Remember that in C/C++ if you want to include a backslash \ in a string literal you need to write a double backslash \\ !
-	// io.Fonts->AddFontDefault();
-	// io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf", 16.0f);
-	// io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf", 15.0f);
-	// io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf", 16.0f);
-	// io.Fonts->AddFontFromFileTTF("../../misc/fonts/ProggyTiny.ttf", 10.0f);
-	// ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
-	// IM_ASSERT(font != NULL);
+	appFont = io.Fonts->AddFontFromMemoryCompressedTTF(base85_compressed_data, base85_compressed_size, 18);
 
 	while (!glfwWindowShouldClose(appWindow))
 	{
