@@ -35,8 +35,8 @@ char details[30] = "Fixing lights";
 char elapsedTime[30] = "0";
 char endTime[30] = "0";
 
-char partySize[3] = "8";
-char partyMax[3] = "12";
+char partySize[4] = "8";
+char partyMax[4] = "12";
 
 char largeImageText[30] = "Discordus";
 char largeImagekey[30] = "discordus";
