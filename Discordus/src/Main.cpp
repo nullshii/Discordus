@@ -4,6 +4,7 @@
 #include <DiscordRPC.h>
 #include <cstdlib>
 #include <cstring>
+#include <exception>
 #include <memory>
 #include <ctime>
 #include <cstdio>
@@ -15,6 +16,7 @@
 #include <SimpleIni.h>
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
+#include <stdexcept>
 
 GLFWwindow *appWindow;
 ImFont *appFont;
@@ -274,8 +276,23 @@ void RenderApp()
 	{
 		if (saveFileDialog.HasSelected())
 		{
-			// TODO: Set values
-			ini.SetValue("Discordus", "details", details);
+			ini.SetValue("Status", "details", details);
+			ini.SetValue("Status", "state", state);
+			ini.SetValue("Status", "largeImagekey", largeImagekey);
+			ini.SetValue("Status", "largeImageText", largeImageText);
+			ini.SetValue("Status", "smallImagekey", smallImagekey);
+			ini.SetValue("Status", "smallImageText", smallImageText);
+			ini.SetValue("Status", "elapsedTime", elapsedTime);
+			ini.SetValue("Status", "endTime", endTime);
+			ini.SetValue("Status", "partySize", partySize);
+			ini.SetValue("Status", "partyMax", partyMax);
+
+			ini.SetValue("Discordus", "useTime", useTime ? "1" : "0");
+			ini.SetValue("Discordus", "useEndTime", useEndTime ? "1" : "0");
+			ini.SetValue("Discordus", "updateTime", updateTime ? "1" : "0");
+			ini.SetValue("Discordus", "useParty", useParty ? "1" : "0");
+			ini.SetValue("Discordus", "useLargeImage", useLargeImage ? "1" : "0");
+			ini.SetValue("Discordus", "useSmallImage", useSmallImage ? "1" : "0");
 
 			ini.SaveFile((saveFileDialog.GetSelected().string() + ".ini").c_str());
 			saveFileDialog.ClearSelected();
@@ -284,8 +301,75 @@ void RenderApp()
 
 		if (loadFileDialog.HasSelected())
 		{
-			ini.LoadFile((loadFileDialog.GetSelected().string() + ".ini").c_str());
-			// TODO: Get values
+			ini.LoadFile(loadFileDialog.GetSelected().string().c_str());
+
+			const char *fdetails = ini.GetValue("Status", "details", details);
+			if (strlen(fdetails) > sizeof(details))
+				throw std::runtime_error("Size of details in save file too large");
+			strcpy(details, fdetails);
+
+			const char *fstate = ini.GetValue("Status", "state", state);
+			if (strlen(fstate) > sizeof(state))
+				throw std::runtime_error("Size of state in save file too large");
+			strcpy(state, fstate);
+
+			const char *flargeImageKey = ini.GetValue("Status", "largeImagekey", largeImagekey);
+			if (strlen(flargeImageKey) > sizeof(largeImagekey))
+				throw std::runtime_error("Size of largeImagekey in save file too large");
+			strcpy(largeImagekey, flargeImageKey);
+
+			const char *flargeImageText = ini.GetValue("Status", "largeImageText", largeImageText);
+			if (strlen(flargeImageText) > sizeof(largeImageText))
+				throw std::runtime_error("Size of largeImageText in save file too large");
+			strcpy(largeImageText, flargeImageText);
+
+			const char *fsmallImageKey = ini.GetValue("Status", "smallImagekey", smallImagekey);
+			if (strlen(fsmallImageKey) > sizeof(smallImagekey))
+				throw std::runtime_error("Size of smallImagekey in save file too small");
+			strcpy(smallImagekey, fsmallImageKey);
+
+			const char *fsmallImageText = ini.GetValue("Status", "smallImageText", smallImageText);
+			if (strlen(fsmallImageText) > sizeof(smallImageText))
+				throw std::runtime_error("Size of smallImageText in save file too small");
+			strcpy(smallImageText, fsmallImageText);
+
+			const char *felapsedTime = ini.GetValue("Status", "elapsedTime", elapsedTime);
+			if (strlen(felapsedTime) > sizeof(elapsedTime))
+				throw std::runtime_error("Size of elapsedTime in save file too small");
+			strcpy(elapsedTime, felapsedTime);
+
+			const char *fendTime = ini.GetValue("Status", "endTime", endTime);
+			if (strlen(fendTime) > sizeof(endTime))
+				throw std::runtime_error("Size of endTime in save file too small");
+			strcpy(endTime, fendTime);
+
+			const char *fpartySize = ini.GetValue("Status", "partySize", partySize);
+			if (strlen(fpartySize) > sizeof(partySize))
+				throw std::runtime_error("Size of partySize in save file too small");
+			strcpy(partySize, fpartySize);
+
+			const char *fpartyMax = ini.GetValue("Status", "partyMax", partyMax);
+			if (strlen(fpartyMax) > sizeof(partyMax))
+				throw std::runtime_error("Size of partyMax in save file too small");
+			strcpy(partyMax, fpartyMax);
+
+			const char *fuseTime = ini.GetValue("Discordus", "useTime", useTime ? "1" : "0");
+			useTime = atoi(fuseTime);
+
+			const char *fuseEndTime = ini.GetValue("Discordus", "useEndTime", useEndTime ? "1" : "0");
+			useEndTime = atoi(fuseEndTime);
+
+			const char *fupdateTime = ini.GetValue("Discordus", "updateTime", updateTime ? "1" : "0");
+			updateTime = atoi(fupdateTime);
+
+			const char *fuseParty = ini.GetValue("Discordus", "useParty", useParty ? "1" : "0");
+			useParty = atoi(fuseParty);
+
+			const char *fuseLargeImage = ini.GetValue("Discordus", "useLargeImage", useLargeImage ? "1" : "0");
+			useLargeImage = atoi(fuseLargeImage);
+
+			const char *fuseSmallImage = ini.GetValue("Discordus", "useSmallImage", useSmallImage ? "1" : "0");
+			useSmallImage = atoi(fuseSmallImage);
 
 			loadFileDialog.ClearSelected();
 			loadFileDialog.Close();

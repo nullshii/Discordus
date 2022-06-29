@@ -6,8 +6,6 @@ Simle cross-platform gui app to set custom discord status.
 
 ### Todo:
 - [DiscordRPCpp - Handle response properly](DiscordRPCpp/src/DiscordRPC.cpp)
-- [Discordus - Get values from *.ini file](Discordus/src/Main.cpp)
-- [Discordus - Set values to *.ini file](Discordus/src/Main.cpp)
 
 ![Preview](Assets/Preview.png)
 
