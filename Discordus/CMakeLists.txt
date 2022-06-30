@@ -15,8 +15,6 @@ endif(MINGW OR WIN32)
 
 file(GLOB_RECURSE ${PROJECT_NAME}Files ${CMAKE_CURRENT_SOURCE_DIR}/src/**.cpp)
 
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
-
 add_executable(${PROJECT_NAME} ${${PROJECT_NAME}Files} ${Res_File})
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
