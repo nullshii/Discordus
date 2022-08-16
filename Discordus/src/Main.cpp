@@ -47,10 +47,10 @@ char partySize[4] = "8";
 char partyMax[4] = "12";
 
 char largeImageText[30] = "Discordus";
-char largeImagekey[30] = "discordus";
+char largeImagekey[200] = "discordus";
 
 char smallImageText[30] = "Discordus";
-char smallImagekey[30] = "discordus";
+char smallImagekey[200] = "discordus";
 
 void quit() { glfwSetWindowShouldClose(appWindow, true); }
 
