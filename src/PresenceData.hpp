@@ -3,6 +3,6 @@
 #include <vector>
 
 struct PresenceData {
-  int number;
-  char text[500];
+  char Status[20];
+  char Description[20];
 };

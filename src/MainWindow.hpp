@@ -10,7 +10,9 @@ public:
 private:
   void OnSave(wxCommandEvent &event);
   void OnOpen(wxCommandEvent &event);
+  void OnAbout(wxCommandEvent &event);
   void OnExit(wxCommandEvent &event);
 
-  wxStaticText *m_Text;
+  wxTextCtrl *m_StatusText;
+  wxTextCtrl *m_DescriptionText;
 };
