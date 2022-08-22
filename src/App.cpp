@@ -1,5 +1,5 @@
-#include "App.h"
-#include "MainWindow.h"
+#include "App.hpp"
+#include "MainWindow.hpp"
 
 bool App::OnInit() {
   MainWindow *window = new MainWindow();
