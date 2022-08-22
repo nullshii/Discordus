@@ -33,9 +33,9 @@ MainWindow::MainWindow() : wxFrame(NULL, wxID_ANY, "Discordus") {
 }
 
 void MainWindow::OnSave(wxCommandEvent &event) {
-  const char *texts = "Some text";
   PresenceData data;
   data.number = 52;
+  strcpy(data.text, "SomeText");
   FileSerializer::Serialize<PresenceData>(&data, "File.sav");
 }
 
