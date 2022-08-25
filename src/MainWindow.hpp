@@ -6,6 +6,7 @@
 class MainWindow : public wxFrame {
 public:
   MainWindow();
+  ~MainWindow();
 
 private:
   void OnSave(wxCommandEvent &event);
@@ -13,6 +14,10 @@ private:
   void OnAbout(wxCommandEvent &event);
   void OnExit(wxCommandEvent &event);
 
-  wxTextCtrl *m_StatusText;
-  wxTextCtrl *m_DescriptionText;
+  void UpdatePresence(wxCommandEvent &event);
+  void LaunchPresence(wxCommandEvent &event);
+
+  wxTextCtrl **m_textFields;
+
+  wxDECLARE_EVENT_TABLE();
 };
