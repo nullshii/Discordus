@@ -1,15 +1,13 @@
 #include "MainWindow.hpp"
 
-#include "FileSerializer.hpp"
-#include "PresenceData.hpp"
-#include "wx/event.h"
-#include "wx/wxcrt.h"
-
-#include <cstring>
+#include <cstdlib>
+#include <fstream>
 #include <string>
 
+#define TEXT_CTRL_COUNT 8
+
 enum ID {
-  ButtonLaunch,
+  ButtonConnect,
   ButtonUpdate,
 };
 
@@ -32,47 +30,48 @@ wxMenuBar *CreateMenuBar() {
   return menuBar;
 }
 
-wxBEGIN_EVENT_TABLE(MainWindow, wxFrame) EVT_BUTTON(ButtonLaunch, MainWindow::LaunchPresence)
+const char *hints[] = {
+    "App ID",           "Status",          "Description",      "Large image key",
+    "Large image text", "Small image key", "Small image text", "Time",
+};
+
+wxBEGIN_EVENT_TABLE(MainWindow, wxFrame) EVT_BUTTON(ButtonConnect, MainWindow::ConnectToDiscord)
     EVT_BUTTON(ButtonUpdate, MainWindow::UpdatePresence) wxEND_EVENT_TABLE();
 
 MainWindow::MainWindow() : wxFrame(NULL, wxID_ANY, "Discordus") {
+  this->SetMinSize(wxSize(400, 310));
   this->SetMenuBar(CreateMenuBar());
-  m_textFields = new wxTextCtrl *[8];
+  this->CreateStatusBar();
 
-  wxGridSizer *fieldsContainer = new wxGridSizer(2);
-  this->SetSizer(fieldsContainer);
-  fieldsContainer->Layout();
+  m_textFields = new wxTextCtrl *[TEXT_CTRL_COUNT];
 
-  for (int i = 0; i < 8; i++) {
-    m_textFields[i] = new wxTextCtrl(this, i);
-    fieldsContainer->Add(m_textFields[i], 1, wxEXPAND | wxALL, 5);
+  wxGridSizer *container = new wxGridSizer(2);
+  this->SetSizer(container);
+  container->Layout();
+
+  wxTextValidator numberValidator(wxFILTER_INCLUDE_CHAR_LIST);
+  wxArrayString list;
+  wxString valid_chars(wxT("0123456789"));
+  size_t len = valid_chars.Length();
+  for (size_t i = 0; i < len; i++)
+    list.Add(wxString(valid_chars.GetChar(i)));
+  numberValidator.SetIncludes(list);
+
+  for (int i = 0; i < TEXT_CTRL_COUNT; i++) {
+    if (i == 0 || i == TEXT_CTRL_COUNT - 1)
+      m_textFields[i] = new wxTextCtrl(this, i, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, numberValidator);
+    else
+      m_textFields[i] = new wxTextCtrl(this, i);
+
+    m_textFields[i]->SetHint(hints[i]);
+    container->Add(m_textFields[i], 1, wxEXPAND | wxALL, 5);
   }
 
-  m_textFields[0]->SetMaxLength(sizeof(PresenceData::AppId));
-  m_textFields[0]->SetHint("App ID");
-  m_textFields[1]->SetMaxLength(sizeof(PresenceData::Status));
-  m_textFields[1]->SetHint("Status");
-  m_textFields[2]->SetMaxLength(sizeof(PresenceData::Description));
-  m_textFields[2]->SetHint("Description");
-  m_textFields[3]->SetMaxLength(sizeof(PresenceData::LargeImageKey));
-  m_textFields[3]->SetHint("Large image key");
-  m_textFields[4]->SetMaxLength(sizeof(PresenceData::LargeImageText));
-  m_textFields[4]->SetHint("Large image text");
-  m_textFields[5]->SetMaxLength(sizeof(PresenceData::SmallImageKey));
-  m_textFields[5]->SetHint("Small image key");
-  m_textFields[6]->SetMaxLength(sizeof(PresenceData::SmallImageText));
-  m_textFields[6]->SetHint("Small image text");
-  m_textFields[7]->SetMaxLength(9);
-  m_textFields[7]->SetHint("time");
-
-  wxButton *LaunchButton = new wxButton(this, ID::ButtonLaunch, "Launch");
+  wxButton *LaunchButton = new wxButton(this, ID::ButtonConnect, "Connect");
   wxButton *UpdateButton = new wxButton(this, ID::ButtonUpdate, "Update");
 
-  wxBoxSizer *buttonsContainer = new wxBoxSizer(wxHORIZONTAL);
-  buttonsContainer->Add(LaunchButton, 1, wxALL | wxEXPAND, 5);
-  buttonsContainer->Add(UpdateButton, 1, wxALL | wxEXPAND, 5);
-  fieldsContainer->Add(buttonsContainer, 1, wxALL | wxEXPAND);
-  buttonsContainer->Layout();
+  container->Add(LaunchButton, 1, wxALL | wxEXPAND, 5);
+  container->Add(UpdateButton, 1, wxALL | wxEXPAND, 5);
 
   this->Bind(wxEVT_MENU, &MainWindow::OnSave, this, wxID_SAVE);
   this->Bind(wxEVT_MENU, &MainWindow::OnOpen, this, wxID_OPEN);
@@ -83,42 +82,48 @@ MainWindow::MainWindow() : wxFrame(NULL, wxID_ANY, "Discordus") {
 MainWindow::~MainWindow() { delete[] m_textFields; }
 
 void MainWindow::OnSave(wxCommandEvent &event) {
-  PresenceData data;
-  memset(&data, 0, sizeof(data));
+  for (int i = 0; i < TEXT_CTRL_COUNT; i++) {
+    if (m_textFields[i]->GetLineText(0).IsEmpty()) {
+      wxMessageBox("Fill all fields to save!", "Warning", wxOK | wxCENTRE | wxICON_WARNING);
+      return;
+    }
+  }
 
-  data.AppId = wxAtoi(m_textFields[0]->GetLineText(0));
-  strcpy(data.Status, m_textFields[1]->GetLineText(0).data());
-  strcpy(data.Description, m_textFields[2]->GetLineText(0).data());
-  strcpy(data.LargeImageKey, m_textFields[3]->GetLineText(0).data());
-  strcpy(data.LargeImageText, m_textFields[4]->GetLineText(0).data());
-  strcpy(data.SmallImageKey, m_textFields[5]->GetLineText(0).data());
-  strcpy(data.SmallImageText, m_textFields[6]->GetLineText(0).data());
-  data.time = wxAtol(m_textFields[7]->GetLineText(0));
+  std::ofstream file("File.sav", std::ios::binary | std::ios::out);
+  if (!file)
+    return;
 
-  FileSerializer::Serialize<PresenceData>(&data, "File.sav");
+  for (int i = 0; i < TEXT_CTRL_COUNT; i++) {
+    file << m_textFields[i]->GetLineText(0) << std::endl;
+  }
+
+  file.close();
 }
 
 void MainWindow::OnOpen(wxCommandEvent &event) {
-  PresenceData data;
-  FileSerializer::Deserialize<PresenceData>(&data, "File.sav");
+  std::string tmpString;
 
-  m_textFields[0]->SetValue(std::to_string(data.AppId));
-  m_textFields[1]->SetValue(data.Status);
-  m_textFields[2]->SetValue(data.Description);
-  m_textFields[3]->SetValue(data.LargeImageKey);
-  m_textFields[4]->SetValue(data.LargeImageText);
-  m_textFields[5]->SetValue(data.SmallImageKey);
-  m_textFields[6]->SetValue(data.SmallImageText);
-  m_textFields[7]->SetValue(std::to_string(data.time));
+  std::ifstream file("File.sav", std::ios::binary | std::ios::in);
+  if (!file)
+    return;
+
+  for (int i = 0; i < TEXT_CTRL_COUNT; i++) {
+    file >> tmpString;
+    m_textFields[i]->SetValue(tmpString);
+  }
+
+  file.close();
 }
 
 void MainWindow::OnAbout(wxCommandEvent &event) {
   wxMessageBox("App still under development :)\n"
                "I'm trying to make good product",
-               "About");
+               "About", wxOK | wxCENTRE | wxICON_NONE);
 }
 
-void MainWindow::LaunchPresence(wxCommandEvent &event) { wxMessageBox("Launched!"); }
-void MainWindow::UpdatePresence(wxCommandEvent &event) { wxMessageBox("Updated!"); }
+void MainWindow::ConnectToDiscord(wxCommandEvent &event) { SetStatusText("Connected"); }
+void MainWindow::UpdatePresence(wxCommandEvent &event) {
+  SetStatusText(std::to_string(this->GetSize().GetX()) + ", " + std::to_string(this->GetSize().GetY()));
+}
 
 void MainWindow::OnExit(wxCommandEvent &event) { Close(true); }

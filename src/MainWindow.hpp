@@ -1,6 +1,5 @@
 #pragma once
 
-#include "FileSerializer.hpp"
 #include <wx/wx.h>
 
 class MainWindow : public wxFrame {
@@ -15,7 +14,7 @@ private:
   void OnExit(wxCommandEvent &event);
 
   void UpdatePresence(wxCommandEvent &event);
-  void LaunchPresence(wxCommandEvent &event);
+  void ConnectToDiscord(wxCommandEvent &event);
 
   wxTextCtrl **m_textFields;
 
