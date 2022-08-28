@@ -1,4 +1,5 @@
 #include "MainWindow.hpp"
+#include "NumberValidator.hpp"
 
 #include <cstdlib>
 #include <fstream>
@@ -49,17 +50,10 @@ MainWindow::MainWindow() : wxFrame(NULL, wxID_ANY, "Discordus") {
   this->SetSizer(container);
   container->Layout();
 
-  wxTextValidator numberValidator(wxFILTER_INCLUDE_CHAR_LIST);
-  wxArrayString list;
-  wxString valid_chars(wxT("0123456789"));
-  size_t len = valid_chars.Length();
-  for (size_t i = 0; i < len; i++)
-    list.Add(wxString(valid_chars.GetChar(i)));
-  numberValidator.SetIncludes(list);
-
   for (int i = 0; i < TEXT_CTRL_COUNT; i++) {
     if (i == 0 || i == TEXT_CTRL_COUNT - 1)
-      m_textFields[i] = new wxTextCtrl(this, i, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, numberValidator);
+      m_textFields[i] =
+          new wxTextCtrl(this, i, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NumberValidator::Validator);
     else
       m_textFields[i] = new wxTextCtrl(this, i);
 
