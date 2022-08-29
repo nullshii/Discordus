@@ -1,5 +1,6 @@
 #pragma once
 
+#include "discord_rpc.h"
 #include <wx/wx.h>
 
 class MainWindow : public wxFrame {
@@ -15,6 +16,8 @@ private:
 
   void UpdatePresence(wxCommandEvent &event);
   void ConnectToDiscord(wxCommandEvent &event);
+
+  static void OnDiscordReady(const DiscordUser *connectedUser);
 
   wxTextCtrl **m_textFields;
 

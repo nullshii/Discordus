@@ -1,8 +1,12 @@
 #include "MainWindow.hpp"
 #include "NumberValidator.hpp"
+#include "discord_rpc.h"
 
 #include <cstdlib>
+#include <ctime>
 #include <fstream>
+#include <functional>
+#include <memory>
 #include <string>
 
 #define TEXT_CTRL_COUNT 8
@@ -115,9 +119,27 @@ void MainWindow::OnAbout(wxCommandEvent &event) {
                "About", wxOK | wxCENTRE | wxICON_NONE);
 }
 
-void MainWindow::ConnectToDiscord(wxCommandEvent &event) { SetStatusText("Connected"); }
+void MainWindow::ConnectToDiscord(wxCommandEvent &event) {
+  std::unique_ptr<DiscordEventHandlers> eventHandlers = std::make_unique<DiscordEventHandlers>();
+  // eventHandlers->ready = ;
+  Discord_Initialize(m_textFields[0]->GetLineText(0), eventHandlers.get(), 1, nullptr);
+}
+
 void MainWindow::UpdatePresence(wxCommandEvent &event) {
-  SetStatusText(std::to_string(this->GetSize().GetX()) + ", " + std::to_string(this->GetSize().GetY()));
+  std::unique_ptr<DiscordRichPresence> presence = std::make_unique<DiscordRichPresence>();
+  presence->state = m_textFields[1]->GetLineText(0);
+  presence->details = m_textFields[2]->GetLineText(0);
+  presence->largeImageKey = m_textFields[3]->GetLineText(0);
+  presence->largeImageText = m_textFields[4]->GetLineText(0);
+  presence->smallImageKey = m_textFields[5]->GetLineText(0);
+  presence->smallImageText = m_textFields[6]->GetLineText(0);
+  if (std::atoi(m_textFields[7]->GetLineText(0)) != 0)
+    presence->startTimestamp = std::time(0) - std::atoi(m_textFields[7]->GetLineText(0));
+  Discord_UpdatePresence(presence.get());
+}
+
+void MainWindow::OnDiscordReady(const DiscordUser *connectedUser) {
+  // SetStatusText(std::string("Connected to account ") + connectedUser->username, 10);
 }
 
 void MainWindow::OnExit(wxCommandEvent &event) { Close(true); }
