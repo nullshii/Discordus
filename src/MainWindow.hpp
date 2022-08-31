@@ -6,9 +6,11 @@
 class MainWindow : public wxFrame {
 public:
   MainWindow();
-  ~MainWindow();
 
 private:
+  void CreateMenuBar();
+  void InitFields();
+
   void OnSave(wxCommandEvent &event);
   void OnOpen(wxCommandEvent &event);
   void OnAbout(wxCommandEvent &event);
@@ -19,7 +21,19 @@ private:
 
   static void OnDiscordReady(const DiscordUser *connectedUser);
 
-  wxTextCtrl **m_textFields;
+  wxTextCtrl *m_AppIdField;
+  wxTextCtrl *m_StateField;
+  wxTextCtrl *m_DetailsField;
+  wxTextCtrl *m_StartTimestampField;
+  wxTextCtrl *m_EndTimestampField;
+  wxTextCtrl *m_LargeImageKeyField;
+  wxTextCtrl *m_SmallImageKeyField;
+  wxTextCtrl *m_LargeImageTextField;
+  wxTextCtrl *m_SmallImageTextField;
+  wxTextCtrl *m_PartySizeField;
+  wxTextCtrl *m_PartyMaxField;
+
+  wxGridSizer *container;
 
   wxDECLARE_EVENT_TABLE();
 };
