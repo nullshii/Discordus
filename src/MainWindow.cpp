@@ -88,6 +88,7 @@ void MainWindow::InitFields() {
   m_PartySizeField->SetHint("Party size");
   m_PartyMaxField->SetHint("Party max");
 
+  // TODO: Stretch app id field to entire row
   container->Add(m_AppIdField, 2, wxALL | wxEXPAND, 5);
   container->Add(m_StateField, 1, wxALL | wxEXPAND, 5);
   container->Add(m_DetailsField, 1, wxALL | wxEXPAND, 5);
